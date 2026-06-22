@@ -15,4 +15,8 @@
     <ProjectReference Include="../PaintManagementSystem.Models/PaintManagementSystem.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Data/" />
+  </ItemGroup>
+
 </Project>
