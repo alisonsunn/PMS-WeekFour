@@ -10,12 +10,28 @@ namespace PaintManagementSystem.API.Controllers
     [ApiController]
     public class OrdersController : ControllerBase
     {
+        // GetOrdersByPaintId API
         [HttpGet("paint/{paintId}")]
         public IActionResult GetOrdersByPaintId(int paintId)
         {
             var result = PaintData.Orders.Where(order => order.OrderList.Any(orderItem => orderItem.Product.ProductId == paintId)).ToList();
-            return Ok(result);
+            if (result.Count != 0)
+            {
+                return Ok(result);
+            }
+            return NotFound();
         }
         
+        // GetOrdersByUserId API
+        [HttpGet("user/{userId}")]
+        public IActionResult GetOrdersByUserId(int userId)
+        {
+            var result = PaintData.Orders.Where(order => order.UserId == userId).ToList();
+            if (result.Count == 0)
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
     }
 }

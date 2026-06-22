@@ -7,14 +7,15 @@ public class Order : ITrackable
 {
     public DateTime CreatedAt {get;}
     public List<OrderList> OrderList {get;}
-    public int Quantity {get; private set;}
     public decimal TotalPrice {get; private set;}
+    public int UserId {get;}
 
-    public Order(List<OrderList> orderList)
+    public Order(List<OrderList> orderList, int userId)
     {
         OrderList = orderList;
         TotalPrice = GetTotalOrderPrice();
         CreatedAt = DateTime.Now;
+        UserId = userId;
     }
 
     public String DisplayOrder()
