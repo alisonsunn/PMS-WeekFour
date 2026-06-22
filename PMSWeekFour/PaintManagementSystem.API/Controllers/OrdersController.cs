@@ -33,5 +33,17 @@ namespace PaintManagementSystem.API.Controllers
             }
             return Ok(result);
         }
+        
+        // GetOrdersByDate API
+        [HttpGet("createDate/{date}")]
+        public IActionResult GetOrdersByDate(DateTime date)
+        {
+            var result = PaintData.Orders.Where(order => order.CreatedAt.Date == date.Date).ToList();
+            if (result.Count == 0)
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
     }
 }
