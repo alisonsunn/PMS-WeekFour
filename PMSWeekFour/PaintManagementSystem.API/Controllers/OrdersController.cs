@@ -45,5 +45,17 @@ namespace PaintManagementSystem.API.Controllers
             }
             return Ok(result);
         }
+
+        // GetOrdersByPriceRange API
+        [HttpGet("by-price-range")]
+        public IActionResult GetOrdersByPriceRange(decimal min, decimal max)
+        {
+            var result = PaintData.Orders.Where(order => order.TotalPrice > min && order.TotalPrice < max).ToList();
+            if (result.Count == 0)
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
     }
 }
