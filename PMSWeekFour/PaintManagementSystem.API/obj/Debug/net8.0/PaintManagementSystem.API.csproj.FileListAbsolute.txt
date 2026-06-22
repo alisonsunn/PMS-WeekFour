@@ -1,0 +1,7 @@
+/Users/alisonsun/Documents/DistinctionCoding/PMSWeekFour/PaintManagementSystem.API/obj/Debug/net8.0/PaintManagementSystem.API.csproj.AssemblyReference.cache
+/Users/alisonsun/Documents/DistinctionCoding/PMSWeekFour/PaintManagementSystem.API/obj/Debug/net8.0/PaintManagementSystem.API.GeneratedMSBuildEditorConfig.editorconfig
+/Users/alisonsun/Documents/DistinctionCoding/PMSWeekFour/PaintManagementSystem.API/obj/Debug/net8.0/PaintManagementSystem.API.AssemblyInfoInputs.cache
+/Users/alisonsun/Documents/DistinctionCoding/PMSWeekFour/PaintManagementSystem.API/obj/Debug/net8.0/PaintManagementSystem.API.AssemblyInfo.cs
+/Users/alisonsun/Documents/DistinctionCoding/PMSWeekFour/PaintManagementSystem.API/obj/Debug/net8.0/PaintManagementSystem.API.csproj.CoreCompileInputs.cache
+/Users/alisonsun/Documents/DistinctionCoding/PMSWeekFour/PaintManagementSystem.API/obj/Debug/net8.0/PaintManagementSystem.API.MvcApplicationPartsAssemblyInfo.cs
+/Users/alisonsun/Documents/DistinctionCoding/PMSWeekFour/PaintManagementSystem.API/obj/Debug/net8.0/PaintManagementSystem.API.MvcApplicationPartsAssemblyInfo.cache
