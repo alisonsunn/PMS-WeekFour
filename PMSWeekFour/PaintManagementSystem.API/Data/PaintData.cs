@@ -61,8 +61,8 @@ public static class PaintData
         OrderList3
     };
 
-    public static Order Order1 = new Order(OrderLists1);
-    public static Order Order2 = new Order(OrderLists2);
+    public static Order Order1 = new Order(OrderLists1, 1);
+    public static Order Order2 = new Order(OrderLists2, 2);
 
     public static List<Order> Orders = new()
     {
