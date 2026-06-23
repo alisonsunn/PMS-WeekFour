@@ -57,5 +57,30 @@ namespace PaintManagementSystem.API.Controllers
             }
             return Ok(result);
         }
+
+        // GetLastMonthOrders API
+        [HttpGet("last-month")]
+        public IActionResult GetLastMonthOrders()
+        {
+            var lastMonth = DateTime.Now.AddMonths(-1);
+            var result = PaintData.Orders.Where(order => order.CreatedAt >= lastMonth).ToList();
+            if (result.Count == 0)
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
+
+        // GetAllOrders API
+        [HttpGet]
+        public IActionResult GetAllOrders()
+        {
+            var result = PaintData.Orders;
+            if (result.Count == 0)
+            {
+                return NotFound("No orders");
+            }
+            return Ok(result);
+        }
     }
 }
