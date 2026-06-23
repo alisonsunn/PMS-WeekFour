@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using PaintManagementSystem.Models.Enums;
 using PaintManagementSystem.Models.Models;
 using PaintManagementSystem.API.Data;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace PaintManagementSystem.API.Controllers
 {
     [Route("api/[controller]")]
@@ -82,5 +83,24 @@ namespace PaintManagementSystem.API.Controllers
             }
             return Ok(result);
         }
+
+        // GetAllOrders API - by page
+        [HttpGet("by-page")]
+        public IActionResult GetAllOrdersByPage(int pageNumber, int pageSize)
+        {
+            if (pageNumber <= 0 || pageSize <= 0)
+            {
+                return BadRequest("Page number and page size must be greater than 0.");
+            }
+            var result = PaintData.Orders.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+
+            if (result.Count == 0)
+            {
+                return NotFound("No orders");
+            }
+
+            return Ok(result);
+        }
+
     }
 }
