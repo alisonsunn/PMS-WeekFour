@@ -1,11 +1,14 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace PaintManagementSystem.Models.Models;
 
 public class Brand
 {
-    public string Name {get; private set;}
+    public int BrandId {get; set;}
 
-    public Brand (string name)
-    {
-        Name = name;
-    }
+    [Required]
+    [MaxLength(50)]
+    public string Name {get; set;} = string.Empty;
+
+    public List<PaintProduct> PaintProducts {get; set;} = new List<PaintProduct>();
 }

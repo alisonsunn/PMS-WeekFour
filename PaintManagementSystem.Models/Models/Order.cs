@@ -1,21 +1,29 @@
+using System.ComponentModel.DataAnnotations;
 using System.Reflection.Metadata.Ecma335;
 using PaintManagementSystem.Models.Interfaces;
 
 namespace PaintManagementSystem.Models.Models;
 
-public class Order : ITrackable
-{
-    public DateTime CreatedAt {get;}
-    public List<OrderList> OrderList {get;}
-    public decimal TotalPrice {get; private set;}
-    public int UserId {get;}
+public class Order : ITrackable {
+    // one order can only have one user, and one user can have many orders. - 1 to Many
+    // one order can have many orderlist (orderitems)
 
-    public Order(List<OrderList> orderList, int userId)
+    // primary key
+    public int OrderId {get; set;}
+
+    public DateTime CreatedAt {get; set;}
+
+    [Range(0, 8888888)]
+    public decimal TotalPrice {get; set;}
+
+    // foreign key
+    public int UserId {get; set;}
+    public User User {get; set;} = null!;
+
+    public List<OrderList> OrderList {get; set;} = new List<OrderList>();
+
+    public Order()
     {
-        OrderList = orderList;
-        TotalPrice = GetTotalOrderPrice();
-        CreatedAt = DateTime.Now;
-        UserId = userId;
     }
 
     public String DisplayOrder()

@@ -1,19 +1,35 @@
+using System.ComponentModel.DataAnnotations;
 using PaintManagementSystem.Models.Interfaces;
 
 namespace PaintManagementSystem.Models.Models;
 
 public class User
 {
-    private static int _nextUserId = 1;
-    public int UserId {get; private set;}
-    public List<Order> Orders {get; private set;}
-    public List<Payment> Payments {get; private set;}
+    // one User can have many orders , but one order can only have one user. - 1 to many
+    // one User can have many payments, but one payment can only have one user - 1 to many
+    public int UserId {get; set;}
 
-    public User (List<Order> orders, List<Payment> payments)
+    [Required]
+    [MaxLength(50)]
+    public string Name {get; set;} = string.Empty;
+
+    [Required]
+    [MaxLength(100)]
+    [EmailAddress]
+    public string Email {get; set;} = string.Empty;
+
+    [Required]
+    [MaxLength(20)]
+    [Phone]
+    public string Phone {get; set;} = string.Empty;
+
+    // Navigation Property
+    public List<Order> Orders {get; set;} = new List<Order>();
+
+    public List<Payment> Payments {get; set;} = new List<Payment>();
+
+    public User ()
     {
-        UserId = _nextUserId ++;
-        Orders = orders;
-        Payments = payments;
     }
 
     // GetLatest method by using ITrackable
