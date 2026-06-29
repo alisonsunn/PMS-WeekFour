@@ -7,4 +7,4 @@ obj/
 .vscode/
 
 *.user
-*.suo
+*.suo.DS_Store
