@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using PaintManagementSystem.Models.Enums;
 using PaintManagementSystem.Models.Interfaces;
 
@@ -5,25 +6,36 @@ namespace PaintManagementSystem.Models.Models;
 
 public class PaintProduct : IBuyable {
 
+    // One PaintProduct can only have one Brand, one Brand can have many paintProducts - 1 to Many
     private const int DefaultDiscount = 5;
+
     private readonly decimal _taxRate;
-    public int ProductId {get; private set;}
-    public string Name {get; private set;}
-    public PaintType Type {get; private set;}
-    public PaintSpecification Specification {get; private set;}
-    public decimal Price {get; private set;}
 
-    public Brand PaintBrand {get; private set;}
+    // primary key
+    [Key]
+    public int ProductId {get; set;}
 
-    public PaintProduct (int productId, string name, PaintType type, PaintSpecification specification, decimal price, Brand brand) 
+    [Required]
+    [MaxLength(50)]
+    public string Name {get; set;} = string.Empty;
+
+    public PaintType Type {get; set;}
+
+    public PaintSpecification Specification {get; set;} = new PaintSpecification();
+
+    [Range(0,8888)]
+    public decimal Price {get; set;}
+
+    // foreign key
+    public int BrandId {get; set;}
+    public Brand PaintBrand {get; set;} = null!;
+
+    // Navigation Property
+    public List<OrderList> OrderLists { get; set; } = new List<OrderList>();
+
+    public PaintProduct ()
     {
-        ProductId = productId;
-        Name = name;
-        Type = type;
-        Specification = specification;
-        Price = price;
         _taxRate = 0.1m;
-        PaintBrand = brand;
     }
 
     // Display Info for default discounted price product.

@@ -1,25 +1,30 @@
 namespace PaintManagementSystem.Models.Models;
+
+using System.ComponentModel.DataAnnotations;
 using PaintManagementSystem.Models.Enums;
 using PaintManagementSystem.Models.Interfaces;
 
-public class Payment : ITrackable
-{
-    private static int _nextPaymentId = 1;
-    public int PaymentId {get;}
-    public PaymentStatus Status {get; private set;}
-    public decimal PaymentAmount {get; private set;}
-    public PaymentMethod Method {get; private set;}
-    public Order Order {get;}
-    public DateTime CreatedAt {get;}
+public class Payment : ITrackable {
+    // one payment can only have one user, and one user can have many payments
+    // one order can have many payments 
 
-    public Payment(PaymentStatus paymentStatus, PaymentMethod paymentMethod, Order order)
-    {
-        PaymentId = _nextPaymentId ++;
-        Status = paymentStatus;
-        Method = paymentMethod;
-        Order = order;
-        PaymentAmount = Order.TotalPrice;
-        CreatedAt = DateTime.Now;
-    }
+    // primary key
+    public int PaymentId {get; set;}
+
+    // foreign key
+    public int UserId {get; set;}
+    public User User {get; set;} = null!;
+
+    public int OrderId {get; set;}
+    public Order Order {get; set;} = null!;
+
+    public PaymentStatus Status {get; set;}
+
+    [Range(0, 88888888)]
+    public decimal PaymentAmount {get; set;}
+
+    public PaymentMethod Method {get; set;}
+
+    public DateTime CreatedAt {get; set;}
 }
 
