@@ -12,8 +12,8 @@ using PaintManagementSystem.API.DataBase;
 namespace PaintManagementSystem.API.Migrations
 {
     [DbContext(typeof(PaintDbContext))]
-    [Migration("20260629044725_InitialEntityRelationships")]
-    partial class InitialEntityRelationships
+    [Migration("20260702110537_InitialEntityRelationshipsForPaintManagement")]
+    partial class InitialEntityRelationshipsForPaintManagement
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -145,14 +145,10 @@ namespace PaintManagementSystem.API.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("PaymentId");
 
-                    b.HasIndex("OrderId");
-
-                    b.HasIndex("UserId");
+                    b.HasIndex("OrderId")
+                        .IsUnique();
 
                     b.ToTable("Payments");
                 });
@@ -252,20 +248,12 @@ namespace PaintManagementSystem.API.Migrations
             modelBuilder.Entity("PaintManagementSystem.Models.Models.Payment", b =>
                 {
                     b.HasOne("PaintManagementSystem.Models.Models.Order", "Order")
-                        .WithMany()
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PaintManagementSystem.Models.Models.User", "User")
-                        .WithMany("Payments")
-                        .HasForeignKey("UserId")
+                        .WithOne("Payment")
+                        .HasForeignKey("PaintManagementSystem.Models.Models.Payment", "OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Order");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("PaintManagementSystem.Models.Models.Brand", b =>
@@ -276,6 +264,9 @@ namespace PaintManagementSystem.API.Migrations
             modelBuilder.Entity("PaintManagementSystem.Models.Models.Order", b =>
                 {
                     b.Navigation("OrderList");
+
+                    b.Navigation("Payment")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("PaintManagementSystem.Models.Models.PaintProduct", b =>
@@ -286,8 +277,6 @@ namespace PaintManagementSystem.API.Migrations
             modelBuilder.Entity("PaintManagementSystem.Models.Models.User", b =>
                 {
                     b.Navigation("Orders");
-
-                    b.Navigation("Payments");
                 });
 #pragma warning restore 612, 618
         }
