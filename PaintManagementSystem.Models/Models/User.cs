@@ -26,8 +26,6 @@ public class User
     // Navigation Property
     public List<Order> Orders {get; set;} = new List<Order>();
 
-    public List<Payment> Payments {get; set;} = new List<Payment>();
-
     public User ()
     {
     }
@@ -51,7 +49,8 @@ public class User
     // Get the lastest payment record
     public Payment GetLastestPaymemt()
     {
-        return GetLatest(Payments);
+        Order order = GetLatest(Orders);
+        return order.Payment;
     }
 
     // Get the most expensive order
@@ -67,12 +66,13 @@ public class User
     // Get the payment with lowest price
     public Payment GetLowestPayment()
     {
-        return Payments.OrderByDescending(payment=>payment.PaymentAmount).Last();
+        return Orders.OrderBy(order => order.Payment.PaymentAmount).First().Payment;
     }
 
     // Get the payment over 10
     public List<Payment> GetPaymentOverTen()
     {
-        return Payments.FindAll(payment=>payment.PaymentAmount > 10);
+        List<Payment> payments = Orders.Select(order => order.Payment).Where(payment => payment.PaymentAmount > 10).ToList();
+        return payments;
     }
 }

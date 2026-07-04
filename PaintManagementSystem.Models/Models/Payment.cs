@@ -12,9 +12,6 @@ public class Payment : ITrackable {
     public int PaymentId {get; set;}
 
     // foreign key
-    public int UserId {get; set;}
-    public User User {get; set;} = null!;
-
     public int OrderId {get; set;}
     public Order Order {get; set;} = null!;
 
