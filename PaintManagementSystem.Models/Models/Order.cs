@@ -22,6 +22,8 @@ public class Order : ITrackable {
 
     public List<OrderList> OrderList {get; set;} = new List<OrderList>();
 
+    public Payment Payment {get; set;} = new Payment();
+
     public Order()
     {
     }
