@@ -36,7 +36,18 @@ namespace PaintManagementSystem.API.Controllers
         public IActionResult GetOrdersByPaintId(int paintId)
         {
             var result = _context.Orders.Where(order => order.OrderList.Any(orderItem => orderItem.Product.ProductId == paintId));
-            return OkOrNotFoundOrders(result);
+            var orderReturnDTO = result.Select(order => new OrderReturnDTO
+            {
+                OrderId = order.OrderId,
+                UserId = order.UserId,
+                CreatedAt = order.CreatedAt,
+                TotalPrice = order.TotalPrice,
+                OrderList = order.OrderList.Select(orderItem => new OrderItemDTO {
+                     ProductId = orderItem.ProductId,
+                     Quantity = orderItem.Quantity
+                }).ToList()
+            });
+            return OkOrNotFoundOrders(orderReturnDTO);
         }
         
         // GetOrdersByUserId API
@@ -51,24 +62,33 @@ namespace PaintManagementSystem.API.Controllers
         [HttpGet]
         public IActionResult GetAllOrders()
         {
-            var result = _context.Orders;
-            return OkOrNotFoundOrders(result);
+            var orders = _context.Orders.Select(order => new OrderReturnDTO
+            {
+                OrderId = order.OrderId,
+                UserId = order.UserId,
+                CreatedAt = order.CreatedAt,
+                TotalPrice = order.TotalPrice,
+                OrderList = order.OrderList.Select(orderList => new OrderItemDTO {
+                    ProductId = orderList.ProductId,
+                    Quantity = orderList.Quantity}).ToList()
+            });
+            return Ok(orders);
         }
 
         // CreateOrder API
         [HttpPost]
-        public IActionResult CreateOrder(CreateOrderDTO createOrderDTO)
+        public IActionResult CreateOrder([FromBody]CreateOrderDTO createOrderDTO)
         {
-            var result = _context.Orders;
-            Order newOrder = new Order
+            // check if the user exists
+            var user = _context.Users.Any(user => user.UserId == createOrderDTO.UserId);
+            if (!user)
             {
-                UserId = createOrderDTO.UserId,
-                OrderList = createOrderDTO.OrderList.Select(orderlist => new OrderList(orderlist.ProductId, orderlist.Quantity)).ToList(),
-            };
+                return BadRequest($"User Not Found");
+            }
 
             // update price
-            var productIds = newOrder.OrderList.Select(OrderList => OrderList.ProductId).ToList();
-            var products = _context.PaintProducts.Where(paintProduct => productIds.Contains(paintProduct.ProductId));
+            var productIds = createOrderDTO.OrderList.Select(OrderList => OrderList.ProductId).ToList();
+            var products = _context.PaintProducts.Where(paintProduct => productIds.Contains(paintProduct.ProductId)).ToList();
             
             decimal amount = 0;
             foreach (var orderList in createOrderDTO.OrderList)
@@ -78,16 +98,37 @@ namespace PaintManagementSystem.API.Controllers
                 amount += updatedPrice;
             }
 
-            Order newOrderWithPrice = new Order
+            var newOrder = new Order
+                {
+                    UserId = createOrderDTO.UserId,
+                    CreatedAt = DateTime.UtcNow,
+                    TotalPrice = amount,
+
+                    OrderList = createOrderDTO.OrderList
+                        .Select(orderItem => new OrderList(
+                            orderItem.ProductId,
+                            orderItem.Quantity
+                        ))
+                        .ToList()
+                };
+
+            _context.Orders.Add(newOrder);
+            _context.SaveChanges();
+
+            var orderReturnDTO = new OrderReturnDTO
             {
-                UserId = createOrderDTO.UserId,
-                OrderList = createOrderDTO.OrderList.Select(orderlist => new OrderList(orderlist.ProductId, orderlist.Quantity)).ToList(),
-                TotalPrice = amount
+                OrderId = newOrder.OrderId,
+                UserId = newOrder.UserId,
+                CreatedAt = newOrder.CreatedAt,
+                TotalPrice = newOrder.TotalPrice,
+                OrderList = newOrder.OrderList.Select(orderList => new OrderItemDTO
+                {
+                    Quantity = orderList.Quantity,
+                    ProductId = orderList.ProductId
+            }).ToList()
             };
 
-            result.Add(newOrderWithPrice);
-            _context.SaveChanges();
-            return Ok(createOrderDTO);
+            return CreatedAtAction(nameof(GetOrdersByUserId), new {userId = newOrder.UserId}, orderReturnDTO);
         }
         
         // Update Order
@@ -96,15 +137,32 @@ namespace PaintManagementSystem.API.Controllers
         {
             var result = _context.Orders;
             Order order = result.Include(order => order.OrderList).First(order => order.OrderId == id);
-            _context.OrderLists.RemoveRange(order.OrderList);
-
-            order.OrderList = new List<OrderList>
+            
+            foreach (var itemDTO in updateOrderDTO.OrderList)
             {
-                new OrderList (updateOrderDTO.ProductId, updateOrderDTO.Quantity)
-            };
+                var existingOrderItem = order.OrderList.FirstOrDefault(orderItem =>
+                orderItem.OrderListId == itemDTO.OrderListId);
+
+                existingOrderItem.ProductId = itemDTO.ProductId;
+                existingOrderItem.Quantity = itemDTO.Quantity;
+            }
 
             _context.SaveChanges();
-            return Ok(updateOrderDTO);
+
+            var orderReturnDTO = new OrderReturnDTO
+            {
+                OrderId = order.OrderId,
+                UserId = order.UserId,
+                CreatedAt = order.CreatedAt,
+                TotalPrice = order.TotalPrice,
+                OrderList = order.OrderList.Select(orderList => new OrderItemDTO
+                {
+                    Quantity = orderList.Quantity,
+                    ProductId = orderList.ProductId
+            }).ToList()
+            };
+
+            return Ok(orderReturnDTO);
         }
 
         // Delete Order
@@ -112,11 +170,26 @@ namespace PaintManagementSystem.API.Controllers
         public IActionResult DeleteOrder(int id)
         {
             var result = _context.Orders;
-            Order order = result.First(order => order.OrderId == id);
-            result.RemoveRange(order);
+            Order order = result.Include(order => order.OrderList).First(order => order.OrderId == id);
+
+            var orderReturnDTO = new OrderReturnDTO
+            {
+                OrderId = order.OrderId,
+                UserId = order.UserId,
+                CreatedAt = order.CreatedAt,
+                TotalPrice = order.TotalPrice,
+                OrderList = order.OrderList.Select(orderList => new OrderItemDTO
+                {
+                    Quantity = orderList.Quantity,
+                    ProductId = orderList.ProductId
+            }).ToList()
+            };
+            
+            result.Remove(order);
 
             _context.SaveChanges();
-            return Ok(order);
+
+            return Ok(orderReturnDTO);
         }
 
 //         // GetOrdersByDate API
