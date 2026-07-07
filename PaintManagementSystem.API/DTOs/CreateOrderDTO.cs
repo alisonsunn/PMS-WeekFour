@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 using PaintManagementSystem.Models;
 using PaintManagementSystem.Models.Models;
 
@@ -13,8 +14,10 @@ public class CreateOrderDTO
 
 public class CreateOrderItemDTO
 {
+    public int OrderId {get; set;}
+
     public int ProductId { get; set; }
 
+    [Range(0,50)]
     public int Quantity { get; set; }
-
 }
