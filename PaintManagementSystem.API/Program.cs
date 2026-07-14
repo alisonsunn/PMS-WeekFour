@@ -11,6 +11,9 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<PaintProductRepository>();
 builder.Services.AddScoped< IPaintProductsService, PaintProductsService>();
 
+builder.Services.AddScoped<UsersRepository>();
+builder.Services.AddScoped< IUsersService, UsersService>();
+
 builder.Services.AddDbContext<PaintDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("PaintManagementConnection")));
 
 var app = builder.Build();
